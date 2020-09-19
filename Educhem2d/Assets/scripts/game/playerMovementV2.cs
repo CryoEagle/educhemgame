@@ -12,23 +12,34 @@ public class playerMovementV2 : MonoBehaviourPun
 
     Vector2 movement;
 
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         pv = GetComponent<PhotonView>();
     }
 
+    float AngleBetweenTwoPoints(Vector3 a, Vector3 b)
+    {
+        return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+    }
+
     private void Update()
     {
         if (pv.IsMine)
         {
-            Vector3 mouse = Input.mousePosition;
-            Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.localPosition);
-            Vector3 offset = new Vector2(mouse.x - screenPoint.x, mouse.y - screenPoint.y);
-            float angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
-            transform.eulerAngles = new Vector3(0, 0, angle);
-            var cam = GameObject.Find("MainCamera");
-            cam.transform.position = this.transform.position;
+            //Get the Screen positions of the object
+            Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
+
+            //Get the Screen position of the mouse
+            Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
+
+            //Get the angle between the points
+            float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+
+            //Ta Daaa
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
 
             movement.x = Input.GetAxisRaw("Horizontal");
             movement.y = Input.GetAxisRaw("Vertical");
