@@ -7,13 +7,15 @@ using UnityEngine.UI;
 public class gameNetworking : MonoBehaviourPunCallbacks
 {
     public Text roomCodeInfo;
+    public Canvas RoomSelect;
+    public Camera cameraMain;
 
     public GameObject playerPrefab;
-    public GameObject[] spawns;
+    public GameObject[] spawnsRedTeam;
 
     private void Awake()
     {
-        spawns = GameObject.FindGameObjectsWithTag("RedTeamSpawn");
+        spawnsRedTeam = GameObject.FindGameObjectsWithTag("RedTeamSpawn");
     }
 
     public override void OnEnable()
@@ -27,9 +29,30 @@ public class gameNetworking : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        GameObject spawnRandomlySelected = spawns[Random.Range(0, spawns.Length)];
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
-
         roomCodeInfo.text = PhotonNetwork.CurrentRoom.Name;
+    }
+
+    void PlayerSelectedTeam(string team)
+    {
+        if (team == "red")
+        {
+            GameObject spawnRandomlySelected = spawnsRedTeam[Random.Range(0, spawnsRedTeam.Length)];
+            PhotonNetwork.Instantiate(playerPrefab.name, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
+        }
+
+        RoomSelect.enabled = false;
+        cameraMain.enabled = false;
+        print(PhotonNetwork.LocalPlayer.CustomProperties["team"]);
+    }
+
+    public void Btn_RedTeamSelected()
+    {
+        PhotonNetwork.LocalPlayer.CustomProperties["team"] = "red";
+        PlayerSelectedTeam("red");
+    }
+
+    public void Btn_BlueTeamSelected()
+    {
+
     }
 }
