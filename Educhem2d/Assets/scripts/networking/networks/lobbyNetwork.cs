@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class lobbyNetwork : MonoBehaviourPunCallbacks
 {
     public InputField RoomCode;
+    public GameObject ConnectBox;
+    public Text ConnectingText;
 
     void Start()
     {
@@ -32,6 +34,8 @@ public class lobbyNetwork : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         print("Joined lobby");
+        ConnectBox.SetActive(true);
+        ConnectingText.enabled = false;
     }
 
     public void ButtonClick_Join()

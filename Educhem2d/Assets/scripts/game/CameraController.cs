@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviourPun
     private Vector3 velocity = Vector3.zero;
     private float cameraZ = 0;
 
-    private Camera camera;
+    private new Camera camera;
     public PhotonView PV;
 
     void Start()
