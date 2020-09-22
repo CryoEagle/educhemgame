@@ -12,10 +12,12 @@ public class gameNetworking : MonoBehaviourPunCallbacks
 
     public GameObject playerPrefab;
     public GameObject[] spawnsRedTeam;
+    public GameObject[] spawnsBlueTeam;
 
     private void Awake()
     {
         spawnsRedTeam = GameObject.FindGameObjectsWithTag("RedTeamSpawn");
+        spawnsBlueTeam = GameObject.FindGameObjectsWithTag("BlueTeamSpawn");
     }
 
     public override void OnEnable()
@@ -40,6 +42,12 @@ public class gameNetworking : MonoBehaviourPunCallbacks
             PhotonNetwork.Instantiate(playerPrefab.name, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
         }
 
+        if(team == "blue")
+        {
+            GameObject spawnRandomlySelected = spawnsBlueTeam[Random.Range(0, spawnsBlueTeam.Length)];
+            PhotonNetwork.Instantiate(playerPrefab.name, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
+        }
+
         RoomSelect.enabled = false;
         cameraMain.enabled = false;
         print(PhotonNetwork.LocalPlayer.CustomProperties["team"]);
@@ -53,6 +61,7 @@ public class gameNetworking : MonoBehaviourPunCallbacks
 
     public void Btn_BlueTeamSelected()
     {
-
+        PhotonNetwork.LocalPlayer.CustomProperties["team"] = "blue";
+        PlayerSelectedTeam("blue");
     }
 }
