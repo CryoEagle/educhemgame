@@ -17,6 +17,9 @@ public class gameNetworking : MonoBehaviourPunCallbacks
     public characterSelect characterSelectScript;
     public GameObject youDontSelectedTeam;
 
+    public Button redTeamButton;
+    public Button blueTeamButton;
+
     private void Awake()
     {
         spawnsRedTeam = GameObject.FindGameObjectsWithTag("RedTeamSpawn");
@@ -34,6 +37,7 @@ public class gameNetworking : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        RoomSelect.enabled = true;
         roomCodeInfo.text = PhotonNetwork.CurrentRoom.Name;
     }
 
@@ -44,27 +48,36 @@ public class gameNetworking : MonoBehaviourPunCallbacks
 
     void PlayerSelectedTeam(string team)
     {
+        string characterToSpawn = "";
+        if(characterSelectScript.CharacterSelected == null)
+        {
+            characterToSpawn = "jetpackman";
+        } else
+        {
+            characterToSpawn = characterSelectScript.CharacterSelected;
+        }
+
         if (team == "red")
         {
             GameObject spawnRandomlySelected = spawnsRedTeam[Random.Range(0, spawnsRedTeam.Length)];
-            PhotonNetwork.Instantiate(playerPrefab.name, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
+            PhotonNetwork.Instantiate(characterToSpawn, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
         }
 
         if(team == "blue")
         {
             GameObject spawnRandomlySelected = spawnsBlueTeam[Random.Range(0, spawnsBlueTeam.Length)];
-            PhotonNetwork.Instantiate(playerPrefab.name, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
+            PhotonNetwork.Instantiate(characterToSpawn, new Vector2(spawnRandomlySelected.transform.position.x, spawnRandomlySelected.transform.position.y), Quaternion.identity);
         }
 
         RoomSelect.enabled = false;
         cameraMain.enabled = false;
         print(PhotonNetwork.LocalPlayer.CustomProperties["team"]);
+        redTeamButton.enabled = false;
+        blueTeamButton.enabled = false;
     }
 
     public void Btn_RedTeamSelected()
     {
-        print(characterSelectScript.CharacterSelected);
-
         if(characterSelectScript.CharacterSelected == null)
         {
             CharacterNotSelectedPopUp();
